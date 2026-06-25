@@ -9,83 +9,50 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=SF+Pro+Display:wght@400;500;600&amp;display=swap');
         
-        :root {
-            --primary: #000000;
-        }
-        
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-        }
-        
-        .iphone-frame {
-            max-width: 390px;
-            margin: 0 auto;
-            background: #000;
-            border-radius: 60px;
-            padding: 12px;
-            box-shadow: 0 0 0 12px #111, 0 0 0 16px #000;
-        }
-        
-        .app-container {
-            background: #f8f9fa;
-            border-radius: 48px;
-            overflow: hidden;
-            box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.4);
-        }
-        
-        .status-bar {
-            background: #000;
-            color: white;
-            padding: 8px 20px;
-            font-size: 12px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            background: #f2f2f7;
         }
         
         .bingo-grid {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
-            gap: 4px;
-            padding: 12px;
+            gap: 8px;
+            padding: 16px;
             background: white;
+            border-radius: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
         }
         
         .bingo-cell {
             aspect-ratio: 1;
             background: #fff;
-            border: 2px solid #e5e7eb;
-            border-radius: 10px;
+            border: 1.5px solid #e5e7eb;
+            border-radius: 14px;
             display: flex;
             align-items: center;
             justify-content: center;
             text-align: center;
-            font-size: 8.5px;
+            font-size: 9.5px;
             font-weight: 600;
             line-height: 1.15;
-            padding: 3px;
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            padding: 6px 4px;
+            transition: all 0.2s cubic-bezier(0.23, 1, 0.32, 1);
             cursor: pointer;
             user-select: none;
             position: relative;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
         }
         
-        .bingo-cell:hover {
-            border-color: #000;
-            transform: scale(1.02);
+        .bingo-cell:active {
+            transform: scale(0.96);
         }
         
         .bingo-cell.marked {
             background: #000;
             color: white;
             border-color: #000;
-        }
-        
-        .bingo-cell.marked::after {
-            content: '✓';
-            position: absolute;
-            font-size: 18px;
-            font-weight: 700;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
         }
         
         .bingo-cell.free {
@@ -96,155 +63,121 @@
         }
         
         .section-header {
-            font-size: 15px;
-            font-weight: 700;
-            letter-spacing: -0.3px;
-        }
-        
-        .app-header {
-            background: white;
-            padding: 16px 20px;
-            border-bottom: 1px solid #f1f5f9;
+            font-size: 13px;
+            font-weight: 600;
+            color: #6b7280;
+            letter-spacing: -0.2px;
         }
         
         .seed-input {
             font-size: 17px;
-            padding: 14px 16px;
+            padding: 14px 18px;
             border: 1px solid #e5e7eb;
-            border-radius: 12px;
+            border-radius: 14px;
             background: white;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.04);
         }
         
         .generate-btn {
             background: #000;
             color: white;
             font-weight: 600;
-            padding: 14px 24px;
+            padding: 14px 26px;
             border-radius: 9999px;
             font-size: 15px;
-            transition: all 0.2s;
+            transition: transform 0.2s cubic-bezier(0.23, 1, 0.32, 1);
         }
         
         .generate-btn:active {
-            transform: scale(0.97);
+            transform: scale(0.94);
         }
         
-        .shot-counter {
+        .shot-pill {
             background: #000;
             color: white;
             padding: 6px 14px;
             border-radius: 9999px;
             font-size: 13px;
             font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .app-header {
+            padding: 20px 20px 12px;
         }
     </style>
 </head>
-<body class="bg-zinc-950 flex items-center justify-center min-h-screen p-4">
-    <div class="iphone-frame w-full max-w-[390px]">
-        <div class="app-container bg-white min-h-[780px] flex flex-col">
-            
-            <!-- Status Bar -->
-            <div class="status-bar text-xs">
-                <div>9:41</div>
-                <div class="flex items-center gap-1">
-                    <i class="fas fa-signal"></i>
-                    <i class="fas fa-wifi"></i>
-                    <span>100%</span>
-                    <i class="fas fa-battery-full ml-1"></i>
-                </div>
-            </div>
-            
-            <!-- Header -->
-            <div class="app-header flex items-center justify-between px-5 pt-3 pb-2">
-                <div>
-                    <div class="flex items-center gap-2">
-                        <i class="fas fa-home text-2xl"></i>
-                        <div>
-                            <div class="text-2xl font-bold tracking-tighter">Porch Bingo</div>
-                            <div class="text-[10px] text-zinc-500 -mt-1">Drinking Edition</div>
-                        </div>
+<body class="bg-[#f2f2f7] min-h-screen">
+    <div class="max-w-[420px] mx-auto px-4 pt-6 pb-10">
+        
+        <!-- Header -->
+        <div class="flex items-center justify-between mb-6 px-1">
+            <div>
+                <div class="flex items-center gap-2">
+                    <i class="fas fa-home text-3xl text-black"></i>
+                    <div>
+                        <div class="text-3xl font-bold tracking-[-1.5px]">Porch Bingo</div>
+                        <div class="text-[13px] text-zinc-500 -mt-1">Drinking Edition</div>
                     </div>
                 </div>
-                <div class="shot-counter flex items-center gap-1.5">
-                    <i class="fas fa-glass-martini-alt"></i>
-                    <span id="shot-count">0</span>
-                </div>
             </div>
-            
-            <!-- Seed Section -->
-            <div class="px-5 pt-4 pb-2 bg-white">
-                <div class="section-header text-zinc-900 mb-2 px-1">Seed</div>
-                <div class="flex gap-3">
-                    <input id="seed-input" type="number" value="42" 
-                           class="seed-input flex-1 text-lg font-mono focus:outline-none focus:border-black">
-                    <button onclick="generateCard()" 
-                            class="generate-btn px-8 flex items-center justify-center active:scale-[0.985]">
-                        <span class="font-semibold">Generate</span>
-                    </button>
-                </div>
-                <div class="text-[10px] text-zinc-500 mt-1.5 px-1">Same seed = same card order for your crew</div>
+            <div class="shot-pill">
+                <i class="fas fa-glass-martini-alt"></i>
+                <span id="shot-count">0</span>
             </div>
-            
-            <!-- Bingo Grid -->
-            <div class="flex-1 px-4 pt-2 pb-6 bg-white">
-                <div id="bingo-grid" 
-                     class="bingo-grid rounded-3xl border border-zinc-200 shadow-sm">
-                    <!-- Populated by JS -->
-                </div>
-            </div>
-            
-            <!-- Footer actions -->
-            <div class="px-5 pb-8 pt-2 bg-white border-t border-zinc-100">
-                <div class="flex gap-3">
-                    <button onclick="resetCard()" 
-                            class="flex-1 py-3.5 text-sm font-semibold bg-zinc-100 text-zinc-900 rounded-2xl active:bg-zinc-200 transition-colors">
-                        Reset Card
-                    </button>
-                    <button onclick="copySeed()" 
-                            class="flex-1 py-3.5 text-sm font-semibold bg-zinc-900 text-white rounded-2xl active:bg-black transition-colors flex items-center justify-center gap-2">
-                        <i class="fas fa-link text-xs"></i>
-                        <span>Copy Seed</span>
-                    </button>
-                </div>
-            </div>
-            
         </div>
+        
+        <!-- Seed -->
+        <div class="px-1 mb-4">
+            <div class="section-header mb-1.5 px-1">Seed</div>
+            <div class="flex gap-3">
+                <input id="seed-input" type="number" value="42" 
+                       class="seed-input flex-1 text-lg font-mono focus:outline-none focus:border-black">
+                <button onclick="generateCard()" 
+                        class="generate-btn px-8 flex items-center justify-center active:scale-[0.985]">
+                    <span class="font-semibold">Generate</span>
+                </button>
+            </div>
+            <div class="text-[11px] text-zinc-500 mt-1.5 px-1">Same seed = same card for your crew</div>
+        </div>
+        
+        <!-- Bingo Grid -->
+        <div id="bingo-grid" 
+             class="bingo-grid mx-auto shadow-sm border border-zinc-100">
+            <!-- Populated by JS -->
+        </div>
+        
+        <!-- Actions -->
+        <div class="flex gap-3 mt-5 px-1">
+            <button onclick="resetCard()" 
+                    class="flex-1 py-3.5 text-sm font-semibold bg-white text-zinc-900 rounded-2xl border border-zinc-200 active:bg-zinc-50 transition-colors">
+                Reset
+            </button>
+            <button onclick="copySeed()" 
+                    class="flex-1 py-3.5 text-sm font-semibold bg-zinc-900 text-white rounded-2xl active:bg-black transition-colors flex items-center justify-center gap-2">
+                <i class="fas fa-link text-xs"></i>
+                <span>Copy Seed</span>
+            </button>
+        </div>
+        
     </div>
 
     <script>
-        // The 24 topics
         const topics = [
-            "Classic car",
-            "Loud car",
-            "Drunk driver",
-            "Driving recklessly",
-            "Wildlife",
-            "Ag equipment",
-            "Convertible",
-            "Two people on one motorcycle",
-            "Karen",
-            "Noisy wheels/brakes",
-            "Mismatched body panels",
-            "Using spare tire",
-            "Rust bucket",
-            "Engine tick",
-            "Construction worker truck",
-            "EMS",
-            "Headlight/taillight broke",
-            "Dented car door",
-            "Sidewalk hog",
-            "Weird local",
-            "Fitness poser",
-            "Delivery driver",
-            "Gays",
-            "Dog walker"
+            "Classic car", "Loud car", "Drunk driver", "Driving recklessly",
+            "Wildlife", "Ag equipment", "Convertible", "Two people on one motorcycle",
+            "Karen", "Noisy wheels/brakes", "Mismatched body panels", "Using spare tire",
+            "Rust bucket", "Engine tick", "Construction worker truck", "EMS",
+            "Headlight/taillight broke", "Dented car door", "Sidewalk hog", "Weird local",
+            "Fitness poser", "Delivery driver", "Gays", "Dog walker"
         ];
 
         let markedCount = 0;
         let currentSeed = 42;
         let currentGrid = [];
 
-        // Simple seeded random (mulberry32)
         function seededRandom(seed) {
             let t = seed + 0x6D2B79F5;
             t = Math.imul(t ^ t >>> 15, t | 1);
@@ -255,13 +188,10 @@
         function shuffleWithSeed(array, seed) {
             const arr = [...array];
             let currentIndex = arr.length;
-            let randomIndex;
-            
             while (currentIndex !== 0) {
                 const rand = seededRandom(seed + currentIndex);
-                randomIndex = Math.floor(rand * currentIndex);
+                const randomIndex = Math.floor(rand * currentIndex);
                 currentIndex--;
-                
                 [arr[currentIndex], arr[randomIndex]] = [arr[randomIndex], arr[currentIndex]];
             }
             return arr;
@@ -283,15 +213,13 @@
             const grid = document.getElementById('bingo-grid');
             grid.innerHTML = '';
             
-            // 5x5 = 25 cells, middle is FREE
             for (let i = 0; i < 25; i++) {
                 const cell = document.createElement('div');
                 cell.className = 'bingo-cell text-[9.5px] leading-tight font-semibold';
                 
                 if (i === 12) {
-                    // Center free space
                     cell.classList.add('free');
-                    cell.innerHTML = '<div class="text-center"><div>FREE</div><div class="text-[8px] opacity-60">SPACE</div></div>';
+                    cell.innerHTML = '<div class="text-center"><div class="font-bold">FREE</div><div class="text-[8px] opacity-60">SPACE</div></div>';
                     cell.onclick = () => markCell(cell, true);
                 } else {
                     const topicIndex = i < 12 ? i : i - 1;
@@ -311,12 +239,8 @@
                 cell.classList.add('marked');
                 if (!isFree) markedCount++;
             }
-            
-            // Update shot counter
             document.getElementById('shot-count').innerText = markedCount;
-            
-            // Optional: subtle haptic feel on mobile
-            if (navigator.vibrate) navigator.vibrate(10);
+            if (navigator.vibrate) navigator.vibrate(8);
         }
 
         function resetCard() {
@@ -329,12 +253,8 @@
         function copySeed() {
             const seed = document.getElementById('seed-input').value;
             navigator.clipboard.writeText(seed).then(() => {
-                const btns = document.querySelectorAll('button');
-                const originalText = event.currentTarget ? event.currentTarget.innerHTML : '';
-                
-                // Quick visual feedback
                 const toast = document.createElement('div');
-                toast.className = 'fixed bottom-8 left-1/2 -translate-x-1/2 bg-black text-white px-4 py-2 rounded-2xl text-sm flex items-center gap-2';
+                toast.className = 'fixed bottom-8 left-1/2 -translate-x-1/2 bg-black text-white px-4 py-2 rounded-2xl text-sm flex items-center gap-2 shadow-lg';
                 toast.innerHTML = `<i class="fas fa-check"></i> <span>Seed copied</span>`;
                 document.body.appendChild(toast);
                 
@@ -346,29 +266,23 @@
             });
         }
 
-        // Initialize with default seed
         function init() {
             document.getElementById('seed-input').value = currentSeed;
             generateCard();
             
-            // Keyboard support
-            document.getElementById('seed-input').addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') {
-                    generateCard();
-                }
-            });
-            
-            // Auto-generate on seed change (debounced)
             let timeout;
             document.getElementById('seed-input').addEventListener('input', function() {
                 clearTimeout(timeout);
                 timeout = setTimeout(() => {
                     generateCard();
-                }, 600);
+                }, 550);
+            });
+            
+            document.getElementById('seed-input').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') generateCard();
             });
         }
 
-        // Boot the app
         window.onload = init;
     </script>
 </body>
