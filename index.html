@@ -232,11 +232,18 @@
         }
 
         function markCell(cell, isFree) {
+            const column = Array.from(cell.parentNode.children).indexOf(cell) % 5;
+            const colors = ['#ef4444', '#f97316', '#eab308', '#22c55e', '#a855f7'];
+            
             if (cell.classList.contains('marked')) {
                 cell.classList.remove('marked');
+                cell.style.background = '';
+                cell.style.borderColor = '';
                 if (!isFree) markedCount--;
             } else {
                 cell.classList.add('marked');
+                cell.style.background = colors[column];
+                cell.style.borderColor = colors[column];
                 if (!isFree) markedCount++;
             }
             document.getElementById('shot-count').innerText = markedCount;
