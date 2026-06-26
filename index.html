@@ -12,6 +12,11 @@
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             background: #f2f2f7;
+            transition: background 0.3s ease;
+        }
+        
+        body.dark {
+            background: #1a1625;
         }
         
         .bingo-grid {
@@ -22,6 +27,11 @@
             background: white;
             border-radius: 20px;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+        }
+        
+        body.dark .bingo-grid {
+            background: #2a2438;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
         }
         
         .bingo-cell {
@@ -44,15 +54,20 @@
             box-shadow: 0 1px 3px rgba(0,0,0,0.05);
         }
         
+        body.dark .bingo-cell {
+            background: #3a3349;
+            border-color: #4a4359;
+            color: #f1e7ff;
+        }
+        
         .bingo-cell:active {
             transform: scale(0.96);
         }
         
         .bingo-cell.marked {
-            background: #000;
             color: white;
-            border-color: #000;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            border-color: transparent;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
         }
         
         .bingo-cell.free {
@@ -62,11 +77,21 @@
             color: #64748b;
         }
         
+        body.dark .bingo-cell.free {
+            background: #3a3349;
+            border-color: #5a5369;
+            color: #b8a9d9;
+        }
+        
         .section-header {
             font-size: 13px;
             font-weight: 600;
             color: #6b7280;
             letter-spacing: -0.2px;
+        }
+        
+        body.dark .section-header {
+            color: #b8a9d9;
         }
         
         .seed-input {
@@ -76,24 +101,38 @@
             border-radius: 14px;
             background: white;
             box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+            transition: all 0.2s ease;
+        }
+        
+        .seed-input:focus {
+            border-image: linear-gradient(to right, #ff0080, #ff8c00, #ffeb3b, #4caf50, #9c27b0) 1;
+            box-shadow: 0 0 0 3px rgba(156, 39, 176, 0.15);
+        }
+        
+        body.dark .seed-input {
+            background: #2a2438;
+            border-color: #4a4359;
+            color: #f1e7ff;
         }
         
         .generate-btn {
-            background: #000;
+            background: linear-gradient(90deg, #ff0080, #ff8c00, #ffeb3b, #4caf50, #9c27b0);
+            background-size: 200% 100%;
             color: white;
-            font-weight: 600;
+            font-weight: 700;
             padding: 14px 26px;
             border-radius: 9999px;
             font-size: 15px;
-            transition: transform 0.2s cubic-bezier(0.23, 1, 0.32, 1);
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 0, 128, 0.3);
         }
         
-        .generate-btn:active {
-            transform: scale(0.94);
+        .generate-btn:hover {
+            background-position: 100% 0;
         }
         
         .shot-pill {
-            background: #000;
+            background: linear-gradient(90deg, #ff0080, #9c27b0);
             color: white;
             padding: 6px 14px;
             border-radius: 9999px;
@@ -107,6 +146,28 @@
         .app-header {
             padding: 20px 20px 12px;
         }
+        
+        .pride-flag {
+            font-size: 18px;
+            margin-left: 4px;
+        }
+        
+        .confetti {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 10;
+            animation: confetti-fall 0.8s ease-out forwards;
+        }
+        
+        @keyframes confetti-fall {
+            to {
+                transform: translateY(40px) rotate(360deg);
+                opacity: 0;
+            }
+        }
     </style>
 </head>
 <body class="bg-[#f2f2f7] min-h-screen">
@@ -116,16 +177,22 @@
         <div class="flex items-center justify-between mb-6 px-1">
             <div>
                 <div class="flex items-center gap-2">
-                    <i class="fas fa-home text-3xl text-black"></i>
+                    <i class="fas fa-home text-3xl text-black dark:text-white"></i>
                     <div>
-                        <div class="text-3xl font-bold tracking-[-1.5px]">Porch Bingo</div>
+                        <div class="text-3xl font-bold tracking-[-1.5px] flex items-center">
+                            Porch Bingo 
+                            <span class="pride-flag">🏳️‍🌈</span>
+                        </div>
                         <div class="text-[13px] text-zinc-500 -mt-1">Drinking Edition</div>
                     </div>
                 </div>
             </div>
-            <div class="shot-pill">
-                <i class="fas fa-glass-martini-alt"></i>
-                <span id="shot-count">0</span>
+            <div class="flex items-center gap-3">
+                <button onclick="toggleDarkMode()" class="text-xl px-2">🌙</button>
+                <div class="shot-pill">
+                    <i class="fas fa-glass-martini-alt"></i>
+                    <span id="shot-count">0</span>
+                </div>
             </div>
         </div>
         
@@ -134,7 +201,7 @@
             <div class="section-header mb-1.5 px-1">Seed</div>
             <div class="flex gap-3">
                 <input id="seed-input" type="number" value="42" 
-                       class="seed-input flex-1 text-lg font-mono focus:outline-none focus:border-black">
+                       class="seed-input flex-1 text-lg font-mono focus:outline-none">
                 <button onclick="generateCard()" 
                         class="generate-btn px-8 flex items-center justify-center active:scale-[0.985]">
                     <span class="font-semibold">Generate</span>
@@ -152,7 +219,7 @@
         <!-- Actions -->
         <div class="flex gap-3 mt-5 px-1">
             <button onclick="resetCard()" 
-                    class="flex-1 py-3.5 text-sm font-semibold bg-white text-zinc-900 rounded-2xl border border-zinc-200 active:bg-zinc-50 transition-colors">
+                    class="flex-1 py-3.5 text-sm font-semibold bg-white text-zinc-900 rounded-2xl border border-zinc-200 active:bg-zinc-50 transition-colors dark:bg-[#2a2438] dark:text-white dark:border-[#4a4359]">
                 Reset
             </button>
             <button onclick="copySeed()" 
@@ -168,15 +235,16 @@
         const topics = [
             "Classic car", "Loud car", "Drunk driver", "Driving recklessly",
             "Wildlife", "Ag equipment", "Convertible", "Two people on one motorcycle",
-            "Decent looking Lesbian", "Noisy wheels/brakes", "Mismatched body panels", "Using spare tire",
-            "Rust bucket", "Engine tick", "Construction worker truck", "EMS",
-            "Headlight/taillight broke", "Dented car door", "Sidewalk hog", "Weird local",
-            "Fitness poser", "Delivery driver", "Gays", "Dog walker"
+            "Decent looking Lesbian", "Lesbian with a mullet", "Twink in cargo shorts", "Bear in a tank top",
+            "Guy with a tote bag and man bun", "Rainbow sticker on the car", "Someone aggressively using they/them",
+            "Power lesbian power walking", "Femme with a buzz cut", "Mismatched body panels", "Using spare tire",
+            "Rust bucket", "Engine tick", "Construction worker truck", "EMS", "Headlight/taillight broke"
         ];
 
         let markedCount = 0;
         let currentSeed = 42;
         let currentGrid = [];
+        let isDark = false;
 
         function seededRandom(seed) {
             let t = seed + 0x6D2B79F5;
@@ -209,30 +277,23 @@
             document.getElementById('shot-count').innerText = '0';
         }
 
-        function renderGrid(shuffledTopics) {
-            const grid = document.getElementById('bingo-grid');
-            grid.innerHTML = '';
-            
-            for (let i = 0; i < 25; i++) {
-                const cell = document.createElement('div');
-                cell.className = 'bingo-cell text-[9.5px] leading-tight font-semibold';
+        function createConfetti(cell) {
+            const colors = ['#ff0080', '#ff8c00', '#ffeb3b', '#4caf50', '#9c27b0'];
+            for (let i = 0; i < 8; i++) {
+                const conf = document.createElement('div');
+                conf.className = 'confetti';
+                conf.style.background = colors[Math.floor(Math.random() * colors.length)];
+                conf.style.left = (Math.random() * 80 + 10) + '%';
+                conf.style.top = '20%';
+                cell.appendChild(conf);
                 
-                if (i === 12) {
-                    cell.classList.add('free');
-                    cell.innerHTML = '<div class="text-center"><div class="font-bold">FREE</div><div class="text-[8px] opacity-60">SPACE</div></div>';
-                    cell.onclick = () => markCell(cell, true);
-                } else {
-                    const topicIndex = i < 12 ? i : i - 1;
-                    cell.innerHTML = `<div class="px-0.5">${shuffledTopics[topicIndex]}</div>`;
-                    cell.onclick = () => markCell(cell, false);
-                }
-                
-                grid.appendChild(cell);
+                setTimeout(() => {
+                    if (conf.parentNode) conf.parentNode.removeChild(conf);
+                }, 800);
             }
         }
 
-        function markCell(cell, isFree) {
-            const column = Array.from(cell.parentNode.children).indexOf(cell) % 5;
+        function markCell(cell, isFree, column) {
             const colors = ['#ef4444', '#f97316', '#eab308', '#22c55e', '#a855f7'];
             
             if (cell.classList.contains('marked')) {
@@ -244,15 +305,45 @@
                 cell.classList.add('marked');
                 cell.style.background = colors[column];
                 cell.style.borderColor = colors[column];
-                if (!isFree) markedCount++;
+                if (!isFree) {
+                    markedCount++;
+                    createConfetti(cell);
+                }
             }
             document.getElementById('shot-count').innerText = markedCount;
             if (navigator.vibrate) navigator.vibrate(8);
         }
 
+        function renderGrid(shuffledTopics) {
+            const grid = document.getElementById('bingo-grid');
+            grid.innerHTML = '';
+            
+            for (let i = 0; i < 25; i++) {
+                const cell = document.createElement('div');
+                cell.className = 'bingo-cell text-[9.5px] leading-tight font-semibold';
+                const column = i % 5;
+                
+                if (i === 12) {
+                    cell.classList.add('free');
+                    cell.innerHTML = '<div class="text-center"><div class="font-bold">FREE</div><div class="text-[8px] opacity-60">SPACE</div></div>';
+                    cell.onclick = () => markCell(cell, true, column);
+                } else {
+                    const topicIndex = i < 12 ? i : i - 1;
+                    cell.innerHTML = `<div class="px-0.5">${shuffledTopics[topicIndex]}</div>`;
+                    cell.onclick = () => markCell(cell, false, column);
+                }
+                
+                grid.appendChild(cell);
+            }
+        }
+
         function resetCard() {
             const cells = document.querySelectorAll('#bingo-grid .bingo-cell');
-            cells.forEach(cell => cell.classList.remove('marked'));
+            cells.forEach(cell => {
+                cell.classList.remove('marked');
+                cell.style.background = '';
+                cell.style.borderColor = '';
+            });
             markedCount = 0;
             document.getElementById('shot-count').innerText = '0';
         }
@@ -271,6 +362,11 @@
                     setTimeout(() => toast.remove(), 200);
                 }, 1400);
             });
+        }
+
+        function toggleDarkMode() {
+            isDark = !isDark;
+            document.body.classList.toggle('dark', isDark);
         }
 
         function init() {
